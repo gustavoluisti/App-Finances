@@ -27,10 +27,13 @@ export default class Interna extends Component {
         this.state = {
             saldo:0,
             historico:[],
+            uid:[],
         };
         this.addReceita = this.addReceita.bind(this);
         this.addDespesa = this.addDespesa.bind(this);
         this.sair       = this.sair.bind(this);
+
+        
 
         firebase.auth().onAuthStateChanged((user)=>{
             if(user) {
@@ -47,22 +50,27 @@ export default class Interna extends Component {
 
                     let state = this.state;
                     state.historico =[];
+                  
 
                     snapshot.forEach((childItem)=>{
                         state.historico.push({
                             key:childItem.key,
                             type:childItem.val().type,
                             valor:childItem.val().valor,
-                            nome:childItem.val().nome
+                            nome:childItem.val().nome,
+                            uid:childItem.val().uid,
                         });
                      });
                      this.setState(state);
             });
 
+
             } else {
                 this.props.navigation.navigate('Home');
             }
         });
+
+        this.deletar = this.deletar.bind(this);
       }
       sair() {
          firebase.auth().signOut(); 
@@ -74,6 +82,14 @@ export default class Interna extends Component {
 
       addDespesa() {
             this.props.navigation.navigate('AddDespesa');
+      }
+
+      deletar(uid, key) {
+          
+
+        firebase.database().ref('historico').child(uid).child(key).remove();
+
+        alert( 'teste'+key);
       }
     
 
@@ -87,7 +103,7 @@ export default class Interna extends Component {
         <FlatList 
             style={styles.historico}
             data={this.state.historico}
-            renderItem={({item})=> <HistoricoItem data={item} />}
+            renderItem={({item})=> <HistoricoItem data={item}  deletar={this.deletar} />}
         />
         <View style={styles.btnArea}>
             <Button title="Add Receita" onPress={this.addReceita} />

@@ -7,28 +7,19 @@ export default class HistoricoItem extends Component{
 
     constructor(props){
         super(props);
-        this.state = {
-            
-        };
-     
-
-        this.deletar = this.deletar.bind(this);
+        this.state = { };  
     }
 
-    deletar() {
-
-        firebase.database.ref().child().remove();
-
-    }
-
-  
+    
     render(){
         return(
             <View style={styles.container} >
                 <Text style={styles.texto} >{this.props.data.nome} </Text>
              
                 <Text style={styles.texto}>R${this.props.data.key} </Text>
-                <Button title="Excluir" onPress={this.deletar} />
+                <Button title="Excluir" onPress={() =>{
+                    this.props.deletar(this.props.data.key);
+                }} />
             </View>
         );
     }
